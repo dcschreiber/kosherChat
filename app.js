@@ -5,7 +5,7 @@ app.get('/', (req, res) => {
     res.send('Working on a Kosher product WhatsApp chat. /n For info please contact daniel@mrvrv.com');
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });
