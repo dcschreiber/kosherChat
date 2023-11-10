@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+    res.send('Working on a Kosher product WhatsApp chat. /n For info please contact daniel@mrvrv.com');
 });
 
 const port = process.env.PORT || 3000;
