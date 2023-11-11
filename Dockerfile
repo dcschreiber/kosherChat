@@ -21,3 +21,6 @@ EXPOSE 8080
 
 # Run the web service on container startup.
 CMD [ "node", "app.js" ]
+
+# Use the official Node.js 14 image for the linux/amd64 platform
+FROM --platform=linux/amd64 node:14-slim
