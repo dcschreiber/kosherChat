@@ -1,43 +1,50 @@
-const {toLog} = require('./libs/logger.js');
-const { MongoClient } = require('mongodb');
+const { toLog } = require('./libs/logger.js');
+const { connectToDB, closeDBConnection } = require('./libs/dbConnection');
 
-const uri = "mongodb://localhost:27017";
-const client = new MongoClient(uri);
 const dbName = 'kosherLists';
 const collectionName = 'KLBD8822';
 
-//This will be the content of the message I receive on WhatsApp
-const searchPattern = 'Oreo'; // Replace with the product you're searching for
-
 async function findProduct(productName) {
     let results = { count: 0, products: [] };
+    let db, collection;
+
     try {
-        await client.connect();
-        const db = client.db(dbName);
-        const collection = db.collection(collectionName);
+        db = await connectToDB(dbName);
 
-        //index:
-        //await collection.createIndex({ searchindexboth: "text" });
+        if (process.env.ENV === 'production') {
+            // Firestore-specific logic
+            collection = db.collection(collectionName);
+            const querySnapshot = await collection.where('searchindexboth', 'array-contains', productName).get();
+            querySnapshot.forEach((doc) => {
+                results.products.push(doc.data());
+            });
+            results.count = results.products.length;
+            toLog(`Number of documents that match the query: ${results.count}`);
+        } else {
+            // MongoDB-specific logic
+            collection = db.collection(collectionName);
 
-        const query = { $text: { $search: productName } };
+            // Uncomment if you need to create the text index on MongoDB
+            // await collection.createIndex({ searchindexboth: "text" });
 
-        results.count = await collection.countDocuments(query);
-        toLog(`Number of documents that match the query: ${results.count}`);
+            const query = { $text: { $search: productName } };
+            results.count = await collection.countDocuments(query);
+            toLog(`Number of documents that match the query: ${results.count}`);
 
-        if (results.count<10) {
-            const productsCursor = collection.find(query);
-            results.products = await productsCursor.toArray();
-            // toLog(products);
-        }else{
-            toLog("Please try a more specific query")
+            if (results.count < 10) {
+                const productsCursor = collection.find(query);
+                results.products = await productsCursor.toArray();
+            } else {
+                toLog("Please try a more specific query");
+            }
         }
-
-
     } catch (e) {
         console.error(e);
+        toLog(`Error in findProduct: ${e.message}`);
     } finally {
-        await client.close();
+        await closeDBConnection();
     }
+
     return results;
 }
 
