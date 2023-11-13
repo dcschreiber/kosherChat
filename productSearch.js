@@ -15,7 +15,7 @@ async function findProduct(productName) {
             // Firestore-specific logic
             collection = db.collection(collectionName);
             // Perform the query
-            const querySnapshot = await collection.where('productName', '==', productName).limit(10).get();
+            const querySnapshot = await collection.where('product', '==', productName).limit(10).get();
 
             // Check the size of the results
             if (querySnapshot.size > 10) {
