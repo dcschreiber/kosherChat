@@ -16,5 +16,8 @@
   "description": "Whatsapp bot for checking Kosher items",
   "engines": {
     "node": ">=14.0.0"
+  },
+  "devDependencies": {
+    "mongodb": "^6.2.0"
   }
 }

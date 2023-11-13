@@ -14,18 +14,23 @@ async function findProduct(productName) {
         if (process.env.ENV === 'production') {
             // Firestore-specific logic
             collection = db.collection(collectionName);
-            const querySnapshot = await collection.where('searchindexboth', 'array-contains', productName).get();
-            querySnapshot.forEach((doc) => {
-                results.products.push(doc.data());
-            });
-            results.count = results.products.length;
-            toLog(`Number of documents that match the query: ${results.count}`);
+            // Perform the query
+            const querySnapshot = await collection.where('productName', '==', productName).limit(10).get();
+
+            // Check the size of the results
+            if (querySnapshot.size > 10) {
+                toLog("Please try a more specific query");
+            } else {
+                querySnapshot.forEach((doc) => {
+                    results.products.push(doc.data());
+                });
+                results.count = results.products.length;
+                toLog(`Number of documents that match the query: ${results.count}`);
+            }
+
         } else {
             // MongoDB-specific logic
             collection = db.collection(collectionName);
-
-            // Uncomment if you need to create the text index on MongoDB
-            // await collection.createIndex({ searchindexboth: "text" });
 
             const query = { $text: { $search: productName } };
             results.count = await collection.countDocuments(query);

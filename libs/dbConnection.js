@@ -1,5 +1,7 @@
 const {toLog} = require('./logger.js');
-const { MongoClient } = require('mongodb');
+if (process.env.ENV !== 'production') {
+    MongoClient = require('mongodb').MongoClient;
+}
 const { Firestore } = require('@google-cloud/firestore');
 
 let dbClient;
