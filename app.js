@@ -29,7 +29,29 @@ app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });
 
-app.post('/webhook', (req, res) => {
-    // Logic to handle incoming messages
-    res.status(200).send('Received!');
+app.post('/webhook', async (req, res) => {
+    let message;
+    if (req.body.Body) {
+        message = req.body.Body;
+        console.log('Found message in Body');
+    } else if (req.body.message) {
+        message = req.body.message;
+        console.log('Found message in message');
+    } else if (req.body.Message) {
+        message = req.body.Message;
+        console.log('Found message in Message');
+    }
+
+    if (!message) {
+        console.log('No message payload found.');
+        return res.status(400).send({ error: 'No message provided' });
+    }
+
+    try {
+        const response = await newMessage(message);
+        res.status(200).send(response);
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
 });
+
