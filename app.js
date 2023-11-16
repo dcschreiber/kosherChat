@@ -24,6 +24,29 @@ app.get('/', (req, res) => {
     res.send('Working on a Kosher product WhatsApp chat. /n For info please contact daniel@mrvrv.com');
 });
 
+app.get('/webhook', (req, res) => {
+    // WhatsApp will send a GET request to verify the webhook with a challenge parameter
+    const mode = req.query['hub.mode'];
+    const token = req.query['hub.verify_token'];
+    const challenge = req.query['hub.challenge'];
+
+    // Verify the mode and token sent are correct
+    if (mode && token) {
+        // Your verify token should be a string that you have previously decided
+        const VERIFY_TOKEN = 'your-verify-token';
+
+        // Checks if the mode is 'subscribe' and the token is correct
+        if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+            // Responds with the challenge token from the request
+            console.log('WEBHOOK_VERIFIED');
+            res.status(200).send(challenge);
+        } else {
+            // Responds with '403 Forbidden' if verify tokens do not match
+            res.sendStatus(403);
+        }
+    }
+});
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
