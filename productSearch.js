@@ -25,7 +25,7 @@ async function findProduct(productName) {
                     results.products.push(doc.data());
                 });
                 results.count = results.products.length;
-                toLog(`Number of documents that match the query: ${results.count}`);
+                toLog(`productSearch: Number of documents that match the query: ${results.count}`);
             }
 
         } else {
