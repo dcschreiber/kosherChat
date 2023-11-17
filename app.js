@@ -1,8 +1,9 @@
 const express = require('express');
 const app = express();
-const { newMessage } = require('./chatMessageInterpreter');
+const { getQueryReply } = require('./chatMessageInterpreter');
 const dotenv = require('dotenv');
 const {toLog} = require("./libs/logger");
+const axios = require('axios');
 // const {toLog} = require("./libs/logger");
 
 dotenv.config(); // Load environment variables from .env
@@ -19,7 +20,7 @@ app.post('/new-message', async (req, res) => {
     }
 
     try {
-        const response = await newMessage(message);
+        const response = await getQueryReply(message);
         res.status(200).send(response);
     } catch (error) {
         res.status(500).send({ error: error.message });
@@ -58,27 +59,42 @@ app.listen(port, () => {
 
 app.post('/webhook', async (req, res) => {
     toLog(`Got post /webhook with body: ${JSON.stringify(req.body, null, 2)}`);
-    let message;
-    if (req.body.Body) {
-        message = req.body.Body;
-        console.log('Found message in Body');
-    } else if (req.body.message) {
-        message = req.body.message;
-        console.log('Found message in message');
-    } else if (req.body.Message) {
-        message = req.body.Message;
-        console.log('Found message in Message');
+
+    // Extracting the message text and sender ID
+    const messageText = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body;
+    const senderId = req.body.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id;
+
+    toLog(`MessageText ${messageText}, senderId: ${senderId}.`);
+
+    if (!messageText || !senderId) {
+        console.log('No text message or sender ID found.');
+        return res.status(400).send({ error: 'No text message or sender ID provided' });
     }
 
-    if (!message) {
-        console.log('No message payload found.');
-        return res.status(400).send({ error: 'No message provided' });
-    }
-
+    // Process the message and get a reply
     try {
-        const response = await newMessage(message);
-        res.status(200).send(response);
+        const replyMessage = await getQueryReply(messageText);
+        toLog(`getQueryReply ${replyMessage}`);
+
+        // Send the reply back to the WhatsApp API
+        await axios({
+            method: 'post',
+            url: `https://graph.facebook.com/v13.0/${process.env.PHONE_NUMBER_ID}/messages`,
+            headers: {
+                'Authorization': `Bearer ${process.env.WHATSAPP_TOKEN}`,
+                'Content-Type': 'application/json',
+            },
+            data: {
+                messaging_product: "whatsapp",
+                to: senderId,
+                type: "text",
+                text: { body: replyMessage }
+            },
+        });
+
+        res.status(200).send('Reply sent to WhatsApp');
     } catch (error) {
+        console.error(`Error in processing and replying: ${error.message}`);
         res.status(500).send({ error: error.message });
     }
 });
