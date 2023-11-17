@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const { newMessage } = require('./chatMessageInterpreter');
 const dotenv = require('dotenv');
+const {toLog} = require("./libs/logger");
 // const {toLog} = require("./libs/logger");
 
 dotenv.config(); // Load environment variables from .env
@@ -34,6 +35,8 @@ app.get('/webhook', (req, res) => {
     const mode = req.query['hub.mode'];
     const token = req.query['hub.verify_token'];
     const challenge = req.query['hub.challenge'];
+
+    toLog(`get webhook was called. hub.mode: ${mode}, hub.verify_token: ${token}, hub.challenge: ${challenge}`)
 
     // Verify the mode and token sent are correct
     if (mode && token) {
