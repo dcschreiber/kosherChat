@@ -36,8 +36,6 @@ app.get('/webhook', (req, res) => {
     const token = req.query['hub.verify_token'];
     const challenge = req.query['hub.challenge'];
 
-    toLog(`get webhook was called. hub.mode: ${mode}, hub.verify_token: ${token}, hub.challenge: ${challenge}`)
-
     // Verify the mode and token sent are correct
     if (mode && token) {
         // Checks if the mode is 'subscribe' and the token is correct
@@ -45,7 +43,7 @@ app.get('/webhook', (req, res) => {
             // Responds with the challenge token from the request
             console.log('WEBHOOK_VERIFIED');
             // res.status(200).send(challenge);
-            res.send(req.query['hub.challenge']);
+            res.send(req.query[challenge]);
         } else {
             // Responds with '403 Forbidden' if verify tokens do not match
             res.sendStatus(403);
@@ -59,7 +57,7 @@ app.listen(port, () => {
 });
 
 app.post('/webhook', async (req, res) => {
-    toLog(`Got post /webhook with body: ${req.body.toString()}` )
+    toLog(`Got post /webhook with body: ${req.body}` )
     let message;
     if (req.body.Body) {
         message = req.body.Body;
