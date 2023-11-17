@@ -1,7 +1,7 @@
 let search = require('./productSearch');
 const {toLog} = require("./libs/logger");
 
-async function newMessage(message) {
+async function getQueryReply(message) {
     try {
         const results = await search.findProduct(message);
         return results.products;
@@ -12,4 +12,4 @@ async function newMessage(message) {
     }
 }
 
-module.exports = { newMessage };
+module.exports = { getQueryReply };
