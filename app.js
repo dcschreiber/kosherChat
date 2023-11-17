@@ -74,7 +74,7 @@ app.post('/webhook', async (req, res) => {
     // Process the message and get a reply
     try {
         const replyMessage = await getQueryReply(messageText);
-        toLog(`getQueryReply ${replyMessage}`);
+        toLog(`getQueryReply ${replyMessage}, sederId: ${senderId}`);
 
         // Send the reply back to the WhatsApp API
         await axios({
