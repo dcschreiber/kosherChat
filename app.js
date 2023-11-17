@@ -1,7 +1,9 @@
 const express = require('express');
 const app = express();
 const { newMessage } = require('./chatMessageInterpreter');
-const dotenv = require('dotenv'); // Import the dotenv package
+const dotenv = require('dotenv');
+const {logger} = require("@google-cloud/firestore/build/src/logger");
+const {toLog} = require("./libs/logger"); // Import the dotenv package
 
 dotenv.config(); // Load environment variables from .env
 
@@ -9,6 +11,8 @@ app.use(express.json()); // To parse JSON body
 
 // Define your verify token as an environment variable
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
+//todo remove:
+toLog(`Token is ${VERIFY_TOKEN}`);
 
 app.post('/new-message', async (req, res) => {
     const message = req.body.message;
