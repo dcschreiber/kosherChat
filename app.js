@@ -58,7 +58,6 @@ app.listen(port, () => {
 });
 
 app.post('/webhook', async (req, res) => {
-    toLog(`Got post /webhook with body: ${JSON.stringify(req.body, null, 2)}`);
 
     // Extracting the message text and sender ID
     const messageText = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body;
