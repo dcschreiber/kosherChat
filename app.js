@@ -59,6 +59,7 @@ app.listen(port, () => {
 });
 
 app.post('/webhook', async (req, res) => {
+    toLog(`Got post /webhook with body: ${req.body.toString()}` )
     let message;
     if (req.body.Body) {
         message = req.body.Body;
