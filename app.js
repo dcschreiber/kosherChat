@@ -1,14 +1,19 @@
 const express = require('express');
 const app = express();
 const { newMessage } = require('./chatMessageInterpreter');
+const dotenv = require('dotenv'); // Import the dotenv package
 
+dotenv.config(); // Load environment variables from .env
 
 app.use(express.json()); // To parse JSON body
+
+// Define your verify token as an environment variable
+const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 
 app.post('/new-message', async (req, res) => {
     const message = req.body.message;
     if (!message) {
-        return res.status(400).send({ error: 'Message is required' });  // Directly sending the response
+        return res.status(400).send({ error: 'Message is required' });
     }
 
     try {
@@ -18,7 +23,6 @@ app.post('/new-message', async (req, res) => {
         res.status(500).send({ error: error.message });
     }
 });
-
 
 app.get('/', (req, res) => {
     res.send('Working on a Kosher product WhatsApp chat. /n For info please contact daniel@mrvrv.com');
@@ -32,9 +36,6 @@ app.get('/webhook', (req, res) => {
 
     // Verify the mode and token sent are correct
     if (mode && token) {
-        // Your verify token should be a string that you have previously decided
-        const VERIFY_TOKEN = 'your-verify-token';
-
         // Checks if the mode is 'subscribe' and the token is correct
         if (mode === 'subscribe' && token === VERIFY_TOKEN) {
             // Responds with the challenge token from the request
@@ -77,4 +78,3 @@ app.post('/webhook', async (req, res) => {
         res.status(500).send({ error: error.message });
     }
 });
-
