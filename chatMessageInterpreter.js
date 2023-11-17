@@ -1,7 +1,11 @@
 // Helper function to format the product object
 function formatProduct(product) {
     const { brand, category, product: productName, kosher } = product;
-    const products = `Brand: ${brand || ""}, Category: ${category || ""}, Product: ${productName || ""}, Kosher: ${kosher || ""}`;
+    return `Brand: ${brand || ""}, Category: ${category || ""}, Product: ${productName || ""}, Kosher: ${kosher || ""}`;
+}
+
+// Helper function to join product strings
+function joinProductStrings(products) {
     return products.map(formatProduct).join('\n-\n');
 }
 
@@ -11,7 +15,7 @@ const { toLog } = require("./libs/logger");
 async function getQueryReply(message) {
     try {
         const results = await search.findProduct(message);
-        return formatProduct(results.products);
+        return joinProductStrings(results.products);
     } catch (error) {
         // Log the error and return a custom message
         toLog(`Error in getQueryReply: ${error.message}`);
