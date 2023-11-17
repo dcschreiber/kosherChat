@@ -1,14 +1,17 @@
 let search = require('./productSearch');
-const {toLog} = require("./libs/logger");
+const { toLog } = require("./libs/logger");
 
 async function getQueryReply(message) {
     try {
         const results = await search.findProduct(message);
-        return results.products;
+        // Map over the products and create a string for each product with selected fields
+        return  replyMessage = results.products.map(product => {
+            return `Product: ${product.product}, Brand: ${product.brand}, Category: ${product.category}, Kosher: ${product.kosher}`;
+        }).join('\n'); // Join each product string with a newline for readability
+
     } catch (error) {
-        // Log the error and return a custom message
-        toLog(`Error in newMessage: ${error.message}`);
-        return {error: 'An error occurred, please try again later.'};
+        toLog(`Error in getQueryReply: ${error.message}`);
+        return 'An error occurred, please try again later.';
     }
 }
 
