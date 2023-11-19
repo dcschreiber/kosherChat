@@ -2,7 +2,6 @@ const algoliasearch = require('algoliasearch');
 const { toLog } = require('./libs/logger.js');
 const { connectToDB, closeDBConnection } = require('./libs/dbConnection');
 const dotenv = require('dotenv');
-require('dotenv').config();
 dotenv.config();
 
 let client, index;
@@ -35,7 +34,7 @@ async function findProduct(productName) {
         } else {
             // Fallback to local DB search logic for development/testing
             const db = await connectToDB();
-            const collection = db.collection('your-collection-name');
+            const collection = db.collection(process.env.COLLECTION_NAME);
 
             const query = { $text: { $search: productName } };
             results.count = await collection.countDocuments(query);
