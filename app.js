@@ -93,6 +93,6 @@ app.post('/webhook', async (req, res) => {
 
     } catch (error) {
         console.error(`Error in processing and replying: ${error.message}`);
-        res.status(500).send({ error: error.message });
+        // res.status(500).send({ error: error.message });
     }
 });
