@@ -58,6 +58,7 @@ app.listen(port, () => {
 });
 
 app.post('/webhook', async (req, res) => {
+    res.status(200).send('Received');
 
     // Extracting the message text and sender ID
     const messageText = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body;
@@ -90,7 +91,6 @@ app.post('/webhook', async (req, res) => {
             },
         });
 
-        res.status(200).send('Reply sent to WhatsApp');
     } catch (error) {
         console.error(`Error in processing and replying: ${error.message}`);
         res.status(500).send({ error: error.message });
