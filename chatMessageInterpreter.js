@@ -1,37 +1,39 @@
+let search = require('./productSearch');
+const { toLog } = require("./libs/logger");
+require('dotenv').config();
+
 // Helper function to format the product object
 function formatProduct(product) {
     // Check if product has the structure from Algolia (production)
-    if (process.env.ENV !== 'production') {
-        const brand = product._highlightResult.brand?.value.replace(/<em>|<\/em>/g, '') || "";
-        const category = product._highlightResult.category?.value.replace(/<em>|<\/em>/g, '') || "";
-        const productName = product._highlightResult.product?.value.replace(/<em>|<\/em>/g, '') || "";
-        const kosher = product._highlightResult.kosher?.value || "";
+    if (process.env.ENV === 'production') {
+        const productName = product.product || 'No Product Name';
+        const brand = product._highlightResult.brand.value.replace(/<[^>]+>/g, '') || 'No Brand Info';
+        const category = product._highlightResult.category.value.replace(/<[^>]+>/g, '') || 'No Category Info';
+        const kosherStatus = product._highlightResult.kosher.value.replace(/<[^>]+>/g, '') || 'No Kosher Info';
 
-        return `Brand: ${brand}, Category: ${category}, Product: ${productName}, Kosher: ${kosher}`;
+        return `Brand: ${brand}, Category: ${category}, Product: ${productName}, Kosher: ${kosherStatus}`;
+
     } else {
+
         // Fallback for local (MongoDB) structure
         const { brand, category, product: productName, kosher } = product;
         return `Brand: ${brand || ""}, Category: ${category || ""}, Product: ${productName || ""}, Kosher: ${kosher || ""}`;
     }
-}
 
+}
 // Helper function to join product strings
 function joinProductStrings(products) {
     return products.map(formatProduct).join('\n-\n');
 }
 
-let search = require('./productSearch');
-const { toLog } = require("./libs/logger");
-
 async function getQueryReply(message) {
     try {
         const results = await search.findProduct(message);
-        const productsJSON = joinProductStrings(results.products);
-        toLog(`results.products: ${JSON.stringify(productsJSON)}`);
-        return productsJSON;
+        toLog(`results.products: ${JSON.stringify(results.products)}`);
+        return joinProductStrings(results.products);
     } catch (error) {
         toLog(`Error in getQueryReply: ${error.message}`);
-        return { error: 'An error occurred, please try again later.' };
+        return 'An error occurred, please try again later.';
     }
 }
 

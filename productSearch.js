@@ -33,7 +33,7 @@ async function findProduct(productName) {
             results.count = results.products.length;
         } else {
             // Fallback to local DB search logic for development/testing
-            const db = await connectToDB();
+            const db = await connectToDB(process.env.DB_NAME);
             const collection = db.collection(process.env.COLLECTION_NAME);
 
             const query = { $text: { $search: productName } };

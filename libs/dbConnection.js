@@ -1,4 +1,6 @@
 const {toLog} = require('./logger.js');
+require('dotenv').config();
+
 if (process.env.ENV !== 'production') {
     MongoClient = require('mongodb').MongoClient;
 }
@@ -12,7 +14,7 @@ if (process.env.ENV === 'production') {
     toLog("Created connection to Firestore DB")
 } else {
     // Initialize MongoDB for development
-    const uri = "mongodb://localhost:27017";
+    const uri = process.env.MONGO_URI;
     dbClient = new MongoClient(uri);
     toLog("Created connection to MongoDB")
 }
