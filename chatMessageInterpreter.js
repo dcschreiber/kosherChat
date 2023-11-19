@@ -29,7 +29,6 @@ function joinProductStrings(products) {
 async function getQueryReply(message) {
     try {
         const results = await search.findProduct(message);
-        toLog(`results.products: ${JSON.stringify(results.products)}`);
         return joinProductStrings(results.products);
     } catch (error) {
         toLog(`Error in getQueryReply: ${error.message}`);
