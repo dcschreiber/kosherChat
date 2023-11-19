@@ -26,8 +26,9 @@ const { toLog } = require("./libs/logger");
 async function getQueryReply(message) {
     try {
         const results = await search.findProduct(message);
-        toLog(`results.products: ${JSON.stringify(results.products, null, 2)}`);
-        return joinProductStrings(results.products);
+        const productsJSON = joinProductStrings(results.products);
+        toLog(`results.products: ${JSON.stringify(productsJSON)}`);
+        return productsJSON;
     } catch (error) {
         toLog(`Error in getQueryReply: ${error.message}`);
         return { error: 'An error occurred, please try again later.' };
