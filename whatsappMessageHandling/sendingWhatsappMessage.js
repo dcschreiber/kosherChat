@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 async function sendWhatsappMessage(replyMessage, senderId) {
+    toLog(`Starting sending of whatsapp message: ${replyMessage}, Sender: ${senderId}`)
     try {
         await axios({
             method: 'post',
@@ -23,6 +24,8 @@ async function sendWhatsappMessage(replyMessage, senderId) {
 
     } catch (error) {
         toLog(`Error in processing and replying: ${error.message}`,2);
+        // todo remove
+        toLog("Test Log")
     }
 }
 
