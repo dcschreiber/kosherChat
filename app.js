@@ -1,12 +1,18 @@
 const express = require('express');
-const app = express();
+const path = require('path');
 const { getQueryReply } = require('./chatMessageInterpreter');
 const dotenv = require('dotenv');
 const {toLog} = require("./libs/logger");
 const {sendWhatsappMessage} = require('./whatsappMessageHandling/sendingWhatsappMessage');
 
 dotenv.config();
+const app = express();
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 app.post('/new-message', async (req, res) => {
     const message = req.body.message;
@@ -20,10 +26,6 @@ app.post('/new-message', async (req, res) => {
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
-});
-
-app.get('/', (req, res) => {
-    res.send('Working on a Kosher product WhatsApp chat. /n For info please contact daniel@mrvrv.com');
 });
 
 // Webhook authentication
@@ -45,15 +47,11 @@ app.get('/webhook', (req, res) => {
     }
 });
 
-
-
 app.post('/webhook', async (req, res) => {
 
-    // Extracting Message Content
-    const messageText = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body;
-    const senderId = req.body.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id;
-    if (!messageText || !senderId) {
+    const {messageText, senderId} = extractMessageContent(req);
 
+    if (!messageText || !senderId) {
         toLog('No text message or sender ID found. Reply with 400', 2);
         return res.status(400).send({ error: 'No text message or sender ID provided' });
     }
@@ -66,6 +64,14 @@ app.post('/webhook', async (req, res) => {
 });
 
 const port = process.env.PORT || 3000;
+
 app.listen(port, () => {
     toLog(`Server listening on port ${port}`);
 });
+
+// Helper Functions
+function extractMessageContent(req) {
+    const messageText = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body;
+    const senderId = req.body.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id;
+    return {messageText, senderId};
+}

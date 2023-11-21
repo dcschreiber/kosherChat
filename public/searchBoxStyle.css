@@ -1,0 +1,68 @@
+
+header {
+    text-align: center;
+    padding: 20px;
+    background-color: #f4f4f4;
+    color: white;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2em;
+    color: black;
+}
+
+
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+#message-sender {
+    max-width: 600px;
+    margin: auto;
+    padding-top: 100px;
+}
+
+#message-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+#send-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#send-button:hover {
+    background-color: #4cae4c;
+}
+
+#result-display{
+    max-width: 580px;
+    margin: auto;
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+}
+
+/* Responsive design for mobile */
+@media (max-width: 600px) {
+    #message-sender {
+        padding-top: 50px;
+    }
+}
