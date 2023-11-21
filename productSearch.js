@@ -19,7 +19,7 @@ async function searchWithAlgolia(productName) {
         const searchResults = await index.search(wildcardQuery, {
             attributesToRetrieve: ['product', 'kosherSearchIndex'],
             hitsPerPage: 10,
-            typoTolerance: false,
+            // typoTolerance: false,
         });
         return searchResults.hits; // This will return an array of search results
     } catch (error) {
