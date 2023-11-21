@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     sendButton.addEventListener('click', function() {
         const message = messageInput.value.trim();
-        console.log(`hostname: ${window.location.hostname}`);
 
         if (message.length < 3) {
             alert('Message must be at least 3 characters long.');
