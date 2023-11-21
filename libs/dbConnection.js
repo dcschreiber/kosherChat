@@ -5,11 +5,9 @@ if (process.env.ENV !== 'production') {
     MongoClient = require('mongodb').MongoClient;
 }
 const { Firestore } = require('@google-cloud/firestore');
-
 let dbClient;
 
 if (process.env.ENV === 'production') {
-    // Initialize Firestore for production
     dbClient = new Firestore();
     toLog("Created connection to Firestore DB")
 } else {
