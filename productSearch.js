@@ -1,6 +1,6 @@
 const algoliaSearch = require('algoliasearch');
 const {toLog} = require('./libs/logger.js');
-const {connectToDB, closeDBConnection} = require('./libs/dbConnection');
+const {connectToDB, closeDBConnection} = require('./libs/DB/dbConnection');
 const dotenv = require('dotenv');
 dotenv.config();
 

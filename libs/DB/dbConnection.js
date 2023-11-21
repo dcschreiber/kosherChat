@@ -1,4 +1,4 @@
-const {toLog} = require('./logger.js');
+const {toLog} = require('../logger.js');
 require('dotenv').config();
 
 if (process.env.ENV !== 'production') {
