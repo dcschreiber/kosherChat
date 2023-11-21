@@ -54,7 +54,7 @@ app.post('/webhook', async (req, res) => {
     const senderId = req.body.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id;
     if (!messageText || !senderId) {
 
-        toLog('No text message or sender ID found.', 2);
+        toLog('No text message or sender ID found. Reply with 400', 2);
         return res.status(400).send({ error: 'No text message or sender ID provided' });
     }
 
@@ -67,5 +67,5 @@ app.post('/webhook', async (req, res) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
+    toLog(`Server listening on port ${port}`);
 });

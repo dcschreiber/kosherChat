@@ -1,12 +1,12 @@
-const algoliasearch = require('algoliasearch');
-const { toLog } = require('./libs/logger.js');
-const { connectToDB, closeDBConnection } = require('./libs/dbConnection');
+const algoliaSearch = require('algoliasearch');
+const {toLog} = require('./libs/logger.js');
+const {connectToDB, closeDBConnection} = require('./libs/dbConnection');
 const dotenv = require('dotenv');
 dotenv.config();
 
 let client, index;
 if (process.env.ENV === 'production') {
-    client = algoliasearch(process.env.ALGOLIA_APP_ID, process.env.ALGOLIA_ADMIN_KEY);
+    client = algoliaSearch(process.env.ALGOLIA_APP_ID, process.env.ALGOLIA_ADMIN_KEY);
     index = client.initIndex(process.env.YOUR_ALGOLIA_INDEX_NAME);
 }
 
@@ -15,7 +15,10 @@ async function searchWithAlgolia(productName) {
         throw new Error('Algolia is not configured');
     }
     try {
-        const searchResults = await index.search(productName, { attributesToRetrieve: ['product', 'kosherSearchIndex'], hitsPerPage: 10 });
+        const searchResults = await index.search(productName, {
+            attributesToRetrieve: ['product', 'kosherSearchIndex'],
+            hitsPerPage: 10
+        });
         return searchResults.hits; // This will return an array of search results
     } catch (error) {
         toLog(`Error in searchWithAlgolia: ${error.message}`);
@@ -25,7 +28,7 @@ async function searchWithAlgolia(productName) {
 
 async function findProduct(productName) {
     toLog(`Started search for product: ${productName}`);
-    let results = { count: 0, products: [] };
+    let results = {count: 0, products: []};
 
     try {
         if (process.env.ENV === 'production') {
@@ -37,7 +40,7 @@ async function findProduct(productName) {
             const db = await connectToDB(process.env.DB_NAME);
             const collection = db.collection(process.env.COLLECTION_NAME);
 
-            const query = { $text: { $search: productName } };
+            const query = {$text: {$search: productName}};
             results.count = await collection.countDocuments(query);
 
             if (results.count < 10) {
@@ -56,4 +59,4 @@ async function findProduct(productName) {
     return results;
 }
 
-module.exports = { findProduct };
+module.exports = {findProduct};

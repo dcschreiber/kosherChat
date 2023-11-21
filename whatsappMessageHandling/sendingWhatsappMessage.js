@@ -1,5 +1,5 @@
 const axios = require("axios");
-const {toLog} = require("../libs/logger");
+const {toLog} = require('../libs/logger.js');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -23,10 +23,10 @@ async function sendWhatsappMessage(replyMessage, senderId) {
         toLog(`Sent Whatsapp Message.`)
 
     } catch (error) {
-        toLog(`Error in processing and replying: ${error.message}`,2);
+        toLog(`Error in processing and replying: ${error.message}`, 2);
         // todo remove
         toLog("Test Log")
     }
 }
 
-module.exports = { sendWhatsappMessage };
+module.exports = {sendWhatsappMessage};
