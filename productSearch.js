@@ -15,9 +15,11 @@ async function searchWithAlgolia(productName) {
         throw new Error('Algolia is not configured');
     }
     try {
-        const searchResults = await index.search(productName, {
+        const wildcardQuery = `*${productName}*`;
+        const searchResults = await index.search(wildcardQuery, {
             attributesToRetrieve: ['product', 'kosherSearchIndex'],
-            hitsPerPage: 10
+            hitsPerPage: 10,
+            typoTolerance: false,
         });
         return searchResults.hits; // This will return an array of search results
     } catch (error) {
