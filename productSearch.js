@@ -34,24 +34,28 @@ async function findProduct(productName) {
 
     try {
         if (process.env.ENV === 'production') {
-            // Use Algolia for textual search in production
-            results.products = await searchWithAlgolia(productName);
-            results.count = results.products.length;
+            const productResults= await searchWithAlgolia(productName);
+            results.count = productResults.length;
+            if (results.count<=10) {
+                results.products = productResults;
+            }else{
+                results.count = -1;
+            }
         } else {
-            // Fallback to local DB search logic for development/testing
             const db = await connectToDB(process.env.DB_NAME);
             const collection = db.collection(process.env.COLLECTION_NAME);
 
             const query = {$text: {$search: productName}};
             results.count = await collection.countDocuments(query);
 
-            if (results.count < 10) {
+            if (results.count <= 10) {
                 results.products = await collection.find(query).toArray();
             } else {
+                results.count = -1;
                 toLog("Please try a more specific query");
             }
-            await closeDBConnection();
         }
+        await closeDBConnection();
     } catch (e) {
         console.error(e);
         toLog(`Error in findProduct: ${e.message}`, 2);

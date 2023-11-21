@@ -8,7 +8,10 @@ const {cleanMongoResults} = require('./libs/DB/mongoDB/mongoQuering')
 async function getQueryReply(message) {
     try {
         const results = await search.findProduct(message);
-        if (process.env.ENV === 'production') {
+        if (results.count === -1){
+            toLog(`Too many results`);
+            return `Too many results. Try a more specific search.`;
+        }else if (process.env.ENV === 'production') {
             return cleanFirestoreResults(results.products);
         }else {
             return cleanMongoResults(results.products);
