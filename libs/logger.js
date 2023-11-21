@@ -1,6 +1,8 @@
 
 function toLog(message, importance=1){
-    console.log(`log message: ${message};`)
+    if (importance>1) {
+        console.log(`log message: ${message};`)
+    }
 }
 
-module.exports.toLog = toLog;
+module.exports = {toLog};

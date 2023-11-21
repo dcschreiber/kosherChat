@@ -24,6 +24,7 @@ async function searchWithAlgolia(productName) {
 }
 
 async function findProduct(productName) {
+    toLog(`Started search for product: ${productName}`);
     let results = { count: 0, products: [] };
 
     try {
@@ -48,9 +49,10 @@ async function findProduct(productName) {
         }
     } catch (e) {
         console.error(e);
-        toLog(`Error in findProduct: ${e.message}`);
+        toLog(`Error in findProduct: ${e.message}`, 2);
     }
 
+    toLog(`Found product in search. Num of results: ${results.count}`);
     return results;
 }
 
