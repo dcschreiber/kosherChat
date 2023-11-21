@@ -24,8 +24,6 @@ async function sendWhatsappMessage(replyMessage, senderId) {
 
     } catch (error) {
         toLog(`Error in processing and replying: ${error.message}`, 2);
-        // todo remove
-        toLog("Test Log")
     }
 }
 
