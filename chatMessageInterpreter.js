@@ -1,5 +1,5 @@
 let search = require('./productSearch');
-const { toLog } = require("./libs/logger");
+const {toLog} = require("./libs/logger");
 require('dotenv').config();
 const {cleanFirestoreResults} = require('./libs/DB/firestore/firestoreQuering')
 const {cleanMongoResults} = require('./libs/DB/mongoDB/mongoQuering')
@@ -8,12 +8,15 @@ const {cleanMongoResults} = require('./libs/DB/mongoDB/mongoQuering')
 async function getQueryReply(message) {
     try {
         const results = await search.findProduct(message);
-        if (results.count === -1){
+        if (results.count === -1) {
             toLog(`Too many results`);
             return `Too many results. Try a more specific search.`;
-        }else if (process.env.ENV === 'production') {
+        } else if (results.count === 0) {
+            toLog(`No Results`);
+            return `No results found.`;
+        } else if (process.env.ENV === 'production') {
             return cleanFirestoreResults(results.products);
-        }else {
+        } else {
             return cleanMongoResults(results.products);
         }
     } catch (error) {
@@ -22,4 +25,4 @@ async function getQueryReply(message) {
     }
 }
 
-module.exports = { getQueryReply };
+module.exports = {getQueryReply};
